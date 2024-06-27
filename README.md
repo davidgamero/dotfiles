@@ -2,5 +2,5 @@
 
 Ubuntu Setup
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotifles/main/setup-ubuntu.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/setup-ubuntu.sh)"
 ```
