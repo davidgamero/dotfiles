@@ -30,3 +30,6 @@ set -g @plugin 'tmux-plugins/tmux-sensible'
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
 run '~/.tmux/plugins/tpm/tpm'" > ~/.config/tmux/tmux.conf
+
+# AZCLI
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
