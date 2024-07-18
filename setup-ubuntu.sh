@@ -38,3 +38,8 @@ run '~/.tmux/plugins/tpm/tpm'" > ~/.config/tmux/tmux.conf
 
 # AZCLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# git
+sudo add-apt-repository ppa:git-core/ppa
+sudo apt update
+sudo apt install git
