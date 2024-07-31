@@ -50,5 +50,10 @@ sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/
 sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/ubuntu/22.04/prod jammy main" > /etc/apt/sources.list.d/microsoft-ubuntu-jammy-prod.list'
 sudo rm microsoft.gpg
 sudo apt update
+
+# GCM
+curl -L https://aka.ms/gcm/linux-install-source.sh | sh
+git config --global credential.azreposCredentialType oauth
+git-credential-manager configure
 sudo apt install intune-portal
 
