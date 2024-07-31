@@ -1,9 +1,4 @@
 # based on https://www.jdegoeij.com/posts/intune-ubuntu-24-04/
-f ! curl -v <the_command> &> /dev/null
-then
-    echo "curl could not be found, installing..."
-    sudo apt install curl
-fi
 
 # set up sources
 SOURCES_FILE=/etc/apt/sources.list.d
