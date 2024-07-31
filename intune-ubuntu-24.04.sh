@@ -3,6 +3,7 @@
 # set up sources
 SOURCES_FILE=/etc/apt/sources.list.d
 if ! grep -q "Suites: mantic" $SOURCES_FILE; then
+  echo "adding mantic apt source"
   echo "Types: deb
 URIs: http://nl.archive.ubuntu.com/ubuntu/
 Suites: mantic
@@ -14,8 +15,11 @@ URIs: http://security.ubuntu.com/ubuntu/
 Suites: mantic-security
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> SOURCES_FILE
+else
+  echo "mantic source found, skipping..."
 fi
 if ! grep -q "Suites: nuble" $SOURCES_FILE; then
+  echo "adding noble apt source"
   echo "Types: deb
 URIs: http://archive.ubuntu.com/ubuntu
 Suites: noble noble-updates noble-backports
@@ -27,6 +31,8 @@ URIs: http://security.ubuntu.com/ubuntu/
 Suites: noble-security
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> SOURCES_FILE
+else
+  echo "noble source found, skipping..."
 fi
 
 # Install edge
