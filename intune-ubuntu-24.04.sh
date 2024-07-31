@@ -51,6 +51,9 @@ sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] h
 sudo rm microsoft.gpg
 sudo apt update
 
+# azure vpn
+sudo apt-get install microsoft-azurevpnclient
+
 # GCM
 curl -L https://aka.ms/gcm/linux-install-source.sh | sh
 git config --global credential.azreposCredentialType oauth
