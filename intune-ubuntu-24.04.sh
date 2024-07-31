@@ -18,7 +18,7 @@ Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> SOURCES_FILE
 else
   echo "mantic source found, skipping..."
 fi
-if ! grep -q "Suites: nuble" $SOURCES_FILE; then
+if ! grep -q "Suites: noble" $SOURCES_FILE; then
   echo "adding noble apt source"
   echo "Types: deb
 URIs: http://archive.ubuntu.com/ubuntu
