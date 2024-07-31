@@ -1,7 +1,7 @@
 # based on https://www.jdegoeij.com/posts/intune-ubuntu-24-04/
 
 # set up sources
-SOURCES_FILE=/etc/apt/sources.list.d
+SOURCES_FILE=/etc/apt/sources.list.d/ubuntu.sources
 if ! grep -q "Suites: mantic" $SOURCES_FILE; then
   echo "adding mantic apt source"
   echo "Types: deb
