@@ -80,5 +80,4 @@ sudo apt update
 sudo apt install code # or code-insiders
 
 # golang
-sudo snap install go --classic
-
+wget https://git.io/go-installer.sh && bash go-installer.sh
