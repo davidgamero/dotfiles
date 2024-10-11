@@ -3,7 +3,7 @@
 
 # set up sources
 SOURCES_FILE=/etc/apt/sources.list.d/ubuntu.sources
-if [ ! grep -q "Suites: mantic" $SOURCES_FILE ]; then
+if ! grep -q "Suites: mantic" $SOURCES_FILE; then
   echo "mantic source not found in $SOURCES_FILE"
   echo "adding mantic apt source to $SOURCES_FILE"
   echo "
@@ -22,7 +22,7 @@ Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
 else
   echo "mantic source found"
 fi
-if [ ! grep -q "Suites: noble" $SOURCES_FILE ]; then
+if ! grep -q "Suites: noble" $SOURCES_FILE; then
   echo "noble source not found in $SOURCES_FILE"
   echo "adding noble apt source to $SOURCES_FILE"
   echo "
