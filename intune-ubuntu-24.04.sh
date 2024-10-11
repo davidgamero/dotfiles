@@ -6,7 +6,7 @@ SOURCES_FILE=/etc/apt/sources.list.d/ubuntu.sources
 if ! grep -q "Suites: mantic" $SOURCES_FILE; then
   echo "mantic source not found in $SOURCES_FILE"
   echo "adding mantic apt source to $SOURCES_FILE"
-  echo "
+  sudo echo "
 Types: deb
 URIs: http://nl.archive.ubuntu.com/ubuntu/
 Suites: mantic
@@ -25,7 +25,7 @@ fi
 if ! grep -q "Suites: noble" $SOURCES_FILE; then
   echo "noble source not found in $SOURCES_FILE"
   echo "adding noble apt source to $SOURCES_FILE"
-  echo "
+  sudo echo "
 Types: deb
 URIs: http://archive.ubuntu.com/ubuntu
 Suites: noble noble-updates noble-backports
