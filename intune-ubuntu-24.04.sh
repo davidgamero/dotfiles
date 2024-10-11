@@ -18,7 +18,13 @@ URIs: http://security.ubuntu.com/ubuntu/
 Suites: mantic-security
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-" >> SOURCES_FILE
+" >> $SOURCES_FILE
+ if ! grep -q "Suites: mantic" $SOURCES_FILE; then
+   echo "failed to add mantic sources"
+   exit
+ else
+   echo "successfully added mantic sources"
+ fi
 else
   echo "mantic source found"
 fi
@@ -37,7 +43,7 @@ URIs: http://security.ubuntu.com/ubuntu/
 Suites: noble-security
 Components: main restricted universe multiverse
 Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-" >> SOURCES_FILE
+" >> $SOURCES_FILE
 else
   echo "noble source found"
 fi
