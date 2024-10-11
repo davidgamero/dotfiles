@@ -1,10 +1,13 @@
+#!/bin/sh
 # based on https://www.jdegoeij.com/posts/intune-ubuntu-24-04/
 
 # set up sources
 SOURCES_FILE=/etc/apt/sources.list.d/ubuntu.sources
-if ! grep -q "Suites: mantic" $SOURCES_FILE; then
-  echo "adding mantic apt source"
-  echo "Types: deb
+if [ ! grep -q "Suites: mantic" $SOURCES_FILE ]; then
+  echo "mantic source not found in $SOURCES_FILE"
+  echo "adding mantic apt source to $SOURCES_FILE"
+  echo "
+Types: deb
 URIs: http://nl.archive.ubuntu.com/ubuntu/
 Suites: mantic
 Components: main restricted universe multiverse
@@ -14,13 +17,16 @@ Types: deb
 URIs: http://security.ubuntu.com/ubuntu/
 Suites: mantic-security
 Components: main restricted universe multiverse
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> SOURCES_FILE
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+" >> SOURCES_FILE
 else
-  echo "mantic source found, skipping..."
+  echo "mantic source found"
 fi
-if ! grep -q "Suites: noble" $SOURCES_FILE; then
-  echo "adding noble apt source"
-  echo "Types: deb
+if [ ! grep -q "Suites: noble" $SOURCES_FILE ]; then
+  echo "noble source not found in $SOURCES_FILE"
+  echo "adding noble apt source to $SOURCES_FILE"
+  echo "
+Types: deb
 URIs: http://archive.ubuntu.com/ubuntu
 Suites: noble noble-updates noble-backports
 Components: main restricted universe multiverse
@@ -30,10 +36,13 @@ Types: deb
 URIs: http://security.ubuntu.com/ubuntu/
 Suites: noble-security
 Components: main restricted universe multiverse
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg" >> SOURCES_FILE
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+" >> SOURCES_FILE
 else
-  echo "noble source found, skipping..."
+  echo "noble source found"
 fi
+
+sudo apt update
 
 # Install edge
 curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -55,7 +64,9 @@ sudo apt update
 sudo apt-get install microsoft-azurevpnclient
 
 # GCM
-curl -L https://aka.ms/gcm/linux-install-source.sh | sh
+wget https://aka.ms/gcm/linux-install-source.sh -O ~/Downloads/git-credential-manaager-install.sh
+chmod +x ~/Downloads/git-credential-manaager-install.sh
+~/Downloads/git-credential-manaager-install.sh
 git config --global credential.azreposCredentialType oauth
 git-credential-manager configure
 sudo apt install intune-portal
