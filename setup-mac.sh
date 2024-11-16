@@ -26,10 +26,15 @@ else
 	echo "ohmyzsh already found..."
 fi
 
-# install neovim
+# install neovim and fonts
 if ! command -v nvim >/dev/null 2>&1; then
-    echo "neovim install not found, installing..."
-    brew install neovim
+	echo "neovim install not found, installing..."
+	brew install neovim
+	brew tap homebrew/cask-fonts
+	brew install --cask font-cascadia-code
+	brew install --cask font-cascadia-code-pl
+	brew install --cask font-cascadia-mono
+	brew install --cask font-cascadia-mono-pl
 else
     echo "neovim install found..."
 fi
