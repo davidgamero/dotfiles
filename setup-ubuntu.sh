@@ -4,6 +4,7 @@ sudo apt update
 sudo apt install git
 
 # install zsh
+sudo apt install zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # zsh-autosuggestions install
