@@ -74,6 +74,9 @@ run '~/.tmux/plugins/tpm/tpm'" > ~/.config/tmux/tmux.conf
 # AZCLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 
+#nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
 # vscode
 sudo apt-get install wget gpg
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
