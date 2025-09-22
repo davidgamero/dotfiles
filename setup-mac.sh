@@ -26,6 +26,9 @@ else
 	echo "ohmyzsh already found..."
 fi
 
+# install tpm
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+
 # install neovim and fonts
 if ! command -v nvim >/dev/null 2>&1; then
 	echo "neovim install not found, installing..."
