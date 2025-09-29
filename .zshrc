@@ -1,5 +1,4 @@
 alias zshrc="nvim ~/dotfiles/.zshrc"
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
