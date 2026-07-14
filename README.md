@@ -22,7 +22,6 @@ scripts/
   setup-mac.sh                  installs tools, links dotfiles, installs hooks
   setup-ubuntu.sh               same, for Ubuntu
   setup-git-commit-signing.sh   configures SSH-based git commit signing
-  intune-ubuntu-24.04.sh        MS Intune enrollment helper (Ubuntu 24.04)
 link.sh                         symlinks config/* into place
 test-install.sh                 CI: link idempotency + hook behavior tests
 ```
@@ -56,11 +55,6 @@ git clone https://github.com/davidgamero/dotfiles ~/.dotfiles
 Ubuntu:
 ```
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-ubuntu.sh)"
-```
-
-Intune for Ubuntu 24.04 (MS Dev):
-```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/intune-ubuntu-24.04.sh)"
 ```
 
 ## Machine-local secrets

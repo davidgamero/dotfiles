@@ -12,7 +12,7 @@ ok()   { echo "  PASS: $1"; PASS=$((PASS+1)); }
 bad()  { echo "  FAIL: $1"; FAIL=$((FAIL+1)); }
 
 echo "== 1. syntax check =="
-for f in scripts/setup-mac.sh scripts/setup-ubuntu.sh scripts/setup-git-commit-signing.sh scripts/intune-ubuntu-24.04.sh link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh; do
+for f in scripts/setup-mac.sh scripts/setup-ubuntu.sh scripts/setup-git-commit-signing.sh link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh; do
   if bash -n "$REPO_ROOT/$f"; then ok "syntax $f"; else bad "syntax $f"; fi
 done
 

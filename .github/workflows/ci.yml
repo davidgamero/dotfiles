@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install -y shellcheck
           shellcheck -S warning \
             scripts/setup-mac.sh scripts/setup-ubuntu.sh \
-            scripts/setup-git-commit-signing.sh scripts/intune-ubuntu-24.04.sh \
+            scripts/setup-git-commit-signing.sh \
             link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh
 
   test-install:
