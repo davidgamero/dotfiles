@@ -6,7 +6,10 @@
 DEVBOX_RG=your-resource-group
 DEVBOX_VM_NAME=your-vm-name
 DEVBOX_SUB_ID=00000000-0000-0000-0000-000000000000
+# DEVBOX_SSH_HOST defaults to DEVBOX_VM_NAME; set only if your ssh alias differs.
+# DEVBOX_SSH_HOST=your-ssh-host
 
 DEVBOX5_RG=your-resource-group
 DEVBOX5_VM_NAME=your-vm-name
 DEVBOX5_SUB_ID=00000000-0000-0000-0000-000000000000
+# DEVBOX5_SSH_HOST=your-ssh-host
