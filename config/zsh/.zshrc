@@ -214,7 +214,8 @@ devbox() {
 
   echo "Connecting..."
   while true; do
-    ssh -o ServerAliveInterval=10 -o ServerAliveCountMax=3 "${DEVBOX_SSH_HOST:-$DEVBOX_VM_NAME}"    printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1005l'
+    ssh -o ServerAliveInterval=10 -o ServerAliveCountMax=3 "${DEVBOX_SSH_HOST:-$DEVBOX_VM_NAME}"
+    printf '\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1005l'
     stty sane
     while read -r -t 0.1; do :; done
     echo "\n\033[33m--- Disconnected. Press Enter to reconnect (Ctrl-C to quit) ---\033[0m"
