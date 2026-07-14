@@ -24,7 +24,7 @@ if [ ! -f "$SCRIPT_DIR/link.sh" ]; then
 fi
 
 # install homebrew
-if ! command -v brew 2>&1 >/dev/null
+if ! command -v brew >/dev/null 2>&1
 then
 	echo "homebrew not found, installing homebrew..."
 	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -36,21 +36,22 @@ fi
 if [[ "$(basename "$SHELL")" != "zsh" ]]; then
 	echo "Current shell is not zsh, installing..."
 	brew install zsh
-	chsh -s $(which zsh)
+	chsh -s "$(which zsh)"
 else
-	echo "current shell is already zsh"	
+	echo "current shell is already zsh"
 fi
 
-# install ohmyzsh
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-	echo "Oh My Zsh not found, installing..."
-	sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-else
-	echo "ohmyzsh already found..."
-fi
+# zsh4humans (z4h) deps. z4h itself self-installs on first interactive shell
+# via the tracked ~/.zshenv bootstrap (linked below by link.sh). It just needs
+# git + zsh + a few tools for the best experience.
+brew install git fzf
 
 # install tpm
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+else
+	echo "tpm already found..."
+fi
 
 # install neovim and fonts
 if ! command -v nvim >/dev/null 2>&1; then
@@ -73,6 +74,14 @@ else
 	echo "kanata already found..."
 fi
 
+# install zoxide (used by .zshrc for `z` dir jumping)
+if ! command -v zoxide >/dev/null 2>&1; then
+	echo "zoxide not found, installing..."
+	brew install zoxide
+else
+	echo "zoxide already found..."
+fi
+
 # symlink tracked dotfiles into place (~/.config/*, ~/.zshrc)
 "$SCRIPT_DIR/link.sh"
 
@@ -81,4 +90,4 @@ fi
 
 echo ""
 echo "Setup complete. Copy config/zsh/devbox.local.zsh.example to"
-echo "~/.config/zsh/devbox.local.zsh and fill in your real values if needed."
+echo "\$HOME/.config/zsh/devbox.local.zsh and fill in your real values if needed."

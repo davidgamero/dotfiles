@@ -20,7 +20,8 @@ link() {
   fi
   mkdir -p -- "$(dirname -- "$dst")"
   if [[ -e "$dst" || -L "$dst" ]]; then
-    local bak="$dst.backup.$(date +%Y%m%d%H%M%S)"
+    local bak
+    bak="$dst.backup.$(date +%Y%m%d%H%M%S)"
     mv -- "$dst" "$bak"
     echo "bak:  $dst -> $bak"
   fi
@@ -35,6 +36,8 @@ link "$REPO_ROOT/config/kanata/kanata.kbd" "$HOME/.config/kanata/kanata.kbd"
 link "$REPO_ROOT/config/nvim"              "$HOME/.config/nvim"
 
 # --- home-level convenience symlink ---------------------------------------
+# ~/.zshenv bootstraps zsh4humans (fetches z4h, sets ZDOTDIR) — must live at $HOME.
+link "$REPO_ROOT/config/zsh/.zshenv" "$HOME/.zshenv"
 # ~/.zshrc -> ~/.config/zsh/.zshrc (z4h reads ~/.zshrc)
 link "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
 

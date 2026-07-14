@@ -1,5 +1,7 @@
 # My Dotfiles
 
+[![CI](https://github.com/davidgamero/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/davidgamero/dotfiles/actions/workflows/ci.yml)
+
 Version-controlled configs, symlinked into place. Secrets stay local (gitignored)
 and a pre-commit hook scans for anything that shouldn't be pushed.
 
@@ -7,6 +9,7 @@ and a pre-commit hook scans for anything that shouldn't be pushed.
 
 ```
 config/
+  zsh/.zshenv                   zsh4humans (z4h) bootstrap (fetches z4h, sets ZDOTDIR)
   zsh/.zshrc                    zsh4humans (z4h) config
   zsh/devbox.local.zsh.example  template for machine-local secrets
   kanata/kanata.kbd             kanata keyboard remapper
@@ -14,17 +17,22 @@ config/
 hooks/
   pre-commit                    secret / corporate-info scanner
   install-hooks.sh              installs the hook into .git/hooks
-link.sh                         symlinks config/* into ~/.config/* (+ ~/.zshrc)
+link.sh                         symlinks config/* into ~/.config/* (+ ~/.zshenv, ~/.zshrc)
 setup-mac.sh                    installs tools, links dotfiles, installs hooks
+test-install.sh                 CI: link idempotency + hook behavior tests
 ```
 
 Symlink chains created by `link.sh`:
 
 ```
+~/.zshenv                       → dotfiles/config/zsh/.zshenv   (bootstraps z4h)
 ~/.zshrc → ~/.config/zsh/.zshrc → dotfiles/config/zsh/.zshrc
 ~/.config/kanata/kanata.kbd     → dotfiles/config/kanata/kanata.kbd
 ~/.config/nvim                  → dotfiles/config/nvim
 ```
+
+Shell is [zsh4humans](https://github.com/romkatv/zsh4humans): `~/.zshenv`
+self-fetches z4h on first interactive shell — no oh-my-zsh needed.
 
 ## Setup
 
