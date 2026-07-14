@@ -1,4 +1,27 @@
 #!/bin/bash
+set -e
+
+# --- self-bootstrap -------------------------------------------------------
+# This script needs the repo on disk (for link.sh + hooks). When run via
+#   sh -c "$(curl -fsSL .../setup-mac.sh)"
+# there is no clone yet, so clone to ~/.dotfiles and re-exec from there.
+DOTFILES_REPO="https://github.com/davidgamero/dotfiles"
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+
+# Resolve the dir this script lives in (empty/unknown when piped).
+SELF="${BASH_SOURCE[0]:-$0}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SELF")" >/dev/null 2>&1 && pwd || true)"
+
+if [ ! -f "$SCRIPT_DIR/link.sh" ]; then
+	echo "setup: no local clone detected, bootstrapping into $DOTFILES_DIR..."
+	if [ ! -d "$DOTFILES_DIR/.git" ]; then
+		command -v git >/dev/null 2>&1 || { echo "error: git required to bootstrap" >&2; exit 1; }
+		git clone "$DOTFILES_REPO" "$DOTFILES_DIR"
+	else
+		echo "setup: existing clone found, reusing it"
+	fi
+	exec bash "$DOTFILES_DIR/setup-mac.sh"
+fi
 
 # install homebrew
 if ! command -v brew 2>&1 >/dev/null
@@ -51,7 +74,6 @@ else
 fi
 
 # symlink tracked dotfiles into place (~/.config/*, ~/.zshrc)
-SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" >/dev/null 2>&1 && pwd)"
 "$SCRIPT_DIR/link.sh"
 
 # install git hooks (pre-commit secret scanner)
