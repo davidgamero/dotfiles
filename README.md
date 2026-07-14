@@ -10,6 +10,7 @@ config/
   zsh/.zshrc                    zsh4humans (z4h) config
   zsh/devbox.local.zsh.example  template for machine-local secrets
   kanata/kanata.kbd             kanata keyboard remapper
+  nvim/                         LazyVim-based neovim config
 hooks/
   pre-commit                    secret / corporate-info scanner
   install-hooks.sh              installs the hook into .git/hooks
@@ -22,6 +23,7 @@ Symlink chains created by `link.sh`:
 ```
 ~/.zshrc → ~/.config/zsh/.zshrc → dotfiles/config/zsh/.zshrc
 ~/.config/kanata/kanata.kbd     → dotfiles/config/kanata/kanata.kbd
+~/.config/nvim                  → dotfiles/config/nvim
 ```
 
 ## Setup

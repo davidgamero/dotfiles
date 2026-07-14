@@ -31,6 +31,8 @@ link() {
 # --- ~/.config mirror ------------------------------------------------------
 link "$REPO_ROOT/config/zsh/.zshrc"        "$HOME/.config/zsh/.zshrc"
 link "$REPO_ROOT/config/kanata/kanata.kbd" "$HOME/.config/kanata/kanata.kbd"
+# nvim: link the whole config dir (~/.config/nvim -> repo config/nvim)
+link "$REPO_ROOT/config/nvim"              "$HOME/.config/nvim"
 
 # --- home-level convenience symlink ---------------------------------------
 # ~/.zshrc -> ~/.config/zsh/.zshrc (z4h reads ~/.zshrc)
