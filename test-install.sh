@@ -12,7 +12,7 @@ ok()   { echo "  PASS: $1"; PASS=$((PASS+1)); }
 bad()  { echo "  FAIL: $1"; FAIL=$((FAIL+1)); }
 
 echo "== 1. syntax check =="
-for f in setup-mac.sh setup-ubuntu.sh link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh; do
+for f in scripts/setup-mac.sh scripts/setup-ubuntu.sh scripts/setup-git-commit-signing.sh scripts/intune-ubuntu-24.04.sh link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh; do
   if bash -n "$REPO_ROOT/$f"; then ok "syntax $f"; else bad "syntax $f"; fi
 done
 
@@ -37,6 +37,7 @@ check_link "$FAKE_HOME/.config/zsh/.zshrc"        "$FAKE_REPO/config/zsh/.zshrc"
 check_link "$FAKE_HOME/.config/kanata/kanata.kbd" "$FAKE_REPO/config/kanata/kanata.kbd"
 check_link "$FAKE_HOME/.config/nvim"              "$FAKE_REPO/config/nvim"
 check_link "$FAKE_HOME/.zshenv"                   "$FAKE_REPO/config/zsh/.zshenv"
+check_link "$FAKE_HOME/.tmux.conf"                "$FAKE_REPO/config/tmux/tmux.conf"
 # ~/.zshrc chains through ~/.config/zsh/.zshrc
 check_link "$FAKE_HOME/.zshrc"                    "$FAKE_HOME/.config/zsh/.zshrc"
 

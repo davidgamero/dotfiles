@@ -40,5 +40,7 @@ link "$REPO_ROOT/config/nvim"              "$HOME/.config/nvim"
 link "$REPO_ROOT/config/zsh/.zshenv" "$HOME/.zshenv"
 # ~/.zshrc -> ~/.config/zsh/.zshrc (z4h reads ~/.zshrc)
 link "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
+# tmux reads ~/.tmux.conf
+link "$REPO_ROOT/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 
 echo "done."

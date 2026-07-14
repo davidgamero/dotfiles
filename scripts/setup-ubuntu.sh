@@ -3,14 +3,15 @@ set -e
 
 # --- self-bootstrap -------------------------------------------------------
 # Needs the repo on disk (for link.sh + hooks). When run via
-#   sh -c "$(curl -fsSL .../setup-ubuntu.sh)"
+#   sh -c "$(curl -fsSL .../scripts/setup-ubuntu.sh)"
 # there is no clone yet, so clone to ~/.dotfiles and re-exec from there.
 DOTFILES_REPO="https://github.com/davidgamero/dotfiles"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 SELF="${BASH_SOURCE[0]:-$0}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "$SELF")" >/dev/null 2>&1 && pwd || true)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd || true)"
 
-if [ ! -f "$SCRIPT_DIR/link.sh" ]; then
+if [ ! -f "$REPO_ROOT/link.sh" ]; then
 	echo "setup: no local clone detected, bootstrapping into $DOTFILES_DIR..."
 	if [ ! -d "$DOTFILES_DIR/.git" ]; then
 		command -v git >/dev/null 2>&1 || { sudo apt update && sudo apt install -y git; }
@@ -18,7 +19,7 @@ if [ ! -f "$SCRIPT_DIR/link.sh" ]; then
 	else
 		echo "setup: existing clone found, reusing it"
 	fi
-	exec bash "$DOTFILES_DIR/setup-ubuntu.sh"
+	exec bash "$DOTFILES_DIR/scripts/setup-ubuntu.sh"
 fi
 
 # git
@@ -79,26 +80,13 @@ chmod +x ./kind
 sudo mv ./kind /usr/local/bin/kind
 
 
-# tmux
+# tmux (config comes from this repo via link.sh below)
 sudo apt install -y tmux
 if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
 	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 else
 	echo "tpm already found..."
 fi
-mkdir -p ~/.config/tmux
-echo "# List of plugins
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-
-# Other examples:
-# set -g @plugin 'github_username/plugin_name'
-# set -g @plugin 'github_username/plugin_name#branch'
-# set -g @plugin 'git@github.com:user/plugin'
-# set -g @plugin 'git@bitbucket.com:user/plugin'
-
-# Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run '~/.tmux/plugins/tpm/tpm'" > ~/.config/tmux/tmux.conf
 
 # AZCLI
 curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
@@ -130,11 +118,17 @@ if ! command -v kanata >/dev/null 2>&1; then
 	fi
 fi
 
-# symlink tracked dotfiles into place (~/.config/*, ~/.zshrc)
-"$SCRIPT_DIR/link.sh"
+# symlink tracked dotfiles into place (~/.config/*, ~/.zshrc, ~/.tmux.conf)
+"$REPO_ROOT/link.sh"
 
 # install git hooks (pre-commit secret scanner)
-"$SCRIPT_DIR/hooks/install-hooks.sh"
+"$REPO_ROOT/hooks/install-hooks.sh"
+
+# optional: configure git commit signing (skip with SKIP_GIT_SIGNING=1)
+if [ "${SKIP_GIT_SIGNING:-0}" != "1" ] && [ -f "$HOME/.ssh/id_rsa.pub" ]; then
+	echo "configuring git commit signing..."
+	bash "$SCRIPT_DIR/setup-git-commit-signing.sh" || echo "note: git signing setup skipped/failed"
+fi
 
 echo ""
 echo "Setup complete. Copy config/zsh/devbox.local.zsh.example to"

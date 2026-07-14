@@ -3,16 +3,17 @@ set -e
 
 # --- self-bootstrap -------------------------------------------------------
 # This script needs the repo on disk (for link.sh + hooks). When run via
-#   sh -c "$(curl -fsSL .../setup-mac.sh)"
+#   sh -c "$(curl -fsSL .../scripts/setup-mac.sh)"
 # there is no clone yet, so clone to ~/.dotfiles and re-exec from there.
 DOTFILES_REPO="https://github.com/davidgamero/dotfiles"
 DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
 
-# Resolve the dir this script lives in (empty/unknown when piped).
+# Resolve this script's dir and the repo root (scripts/ is one level down).
 SELF="${BASH_SOURCE[0]:-$0}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "$SELF")" >/dev/null 2>&1 && pwd || true)"
+REPO_ROOT="$(cd -- "$SCRIPT_DIR/.." >/dev/null 2>&1 && pwd || true)"
 
-if [ ! -f "$SCRIPT_DIR/link.sh" ]; then
+if [ ! -f "$REPO_ROOT/link.sh" ]; then
 	echo "setup: no local clone detected, bootstrapping into $DOTFILES_DIR..."
 	if [ ! -d "$DOTFILES_DIR/.git" ]; then
 		command -v git >/dev/null 2>&1 || { echo "error: git required to bootstrap" >&2; exit 1; }
@@ -20,7 +21,7 @@ if [ ! -f "$SCRIPT_DIR/link.sh" ]; then
 	else
 		echo "setup: existing clone found, reusing it"
 	fi
-	exec bash "$DOTFILES_DIR/setup-mac.sh"
+	exec bash "$DOTFILES_DIR/scripts/setup-mac.sh"
 fi
 
 # install homebrew
@@ -82,11 +83,17 @@ else
 	echo "zoxide already found..."
 fi
 
-# symlink tracked dotfiles into place (~/.config/*, ~/.zshrc)
-"$SCRIPT_DIR/link.sh"
+# symlink tracked dotfiles into place (~/.config/*, ~/.zshrc, ~/.tmux.conf)
+"$REPO_ROOT/link.sh"
 
 # install git hooks (pre-commit secret scanner)
-"$SCRIPT_DIR/hooks/install-hooks.sh"
+"$REPO_ROOT/hooks/install-hooks.sh"
+
+# optional: configure git commit signing (skip with SKIP_GIT_SIGNING=1)
+if [ "${SKIP_GIT_SIGNING:-0}" != "1" ] && [ -f "$HOME/.ssh/id_rsa.pub" ]; then
+	echo "configuring git commit signing..."
+	bash "$SCRIPT_DIR/setup-git-commit-signing.sh" || echo "note: git signing setup skipped/failed"
+fi
 
 echo ""
 echo "Setup complete. Copy config/zsh/devbox.local.zsh.example to"

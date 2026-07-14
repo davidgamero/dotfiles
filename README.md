@@ -14,11 +14,16 @@ config/
   zsh/devbox.local.zsh.example  template for machine-local secrets
   kanata/kanata.kbd             kanata keyboard remapper
   nvim/                         LazyVim-based neovim config
+  tmux/tmux.conf                tmux config
 hooks/
   pre-commit                    secret / corporate-info scanner
   install-hooks.sh              installs the hook into .git/hooks
-link.sh                         symlinks config/* into ~/.config/* (+ ~/.zshenv, ~/.zshrc)
-setup-mac.sh                    installs tools, links dotfiles, installs hooks
+scripts/
+  setup-mac.sh                  installs tools, links dotfiles, installs hooks
+  setup-ubuntu.sh               same, for Ubuntu
+  setup-git-commit-signing.sh   configures SSH-based git commit signing
+  intune-ubuntu-24.04.sh        MS Intune enrollment helper (Ubuntu 24.04)
+link.sh                         symlinks config/* into place
 test-install.sh                 CI: link idempotency + hook behavior tests
 ```
 
@@ -29,6 +34,7 @@ Symlink chains created by `link.sh`:
 ~/.zshrc → ~/.config/zsh/.zshrc → dotfiles/config/zsh/.zshrc
 ~/.config/kanata/kanata.kbd     → dotfiles/config/kanata/kanata.kbd
 ~/.config/nvim                  → dotfiles/config/nvim
+~/.tmux.conf                    → dotfiles/config/tmux/tmux.conf
 ```
 
 Shell is [zsh4humans](https://github.com/romkatv/zsh4humans): `~/.zshenv`
@@ -38,23 +44,23 @@ self-fetches z4h on first interactive shell — no oh-my-zsh needed.
 
 Mac:
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/setup-mac.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-mac.sh)"
 ```
 
 Or from a clone:
 ```
 git clone https://github.com/davidgamero/dotfiles ~/.dotfiles
-~/.dotfiles/setup-mac.sh          # installs tools + links + hooks
+~/.dotfiles/scripts/setup-mac.sh          # installs tools + links + hooks
 ```
 
 Ubuntu:
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/setup-ubuntu.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-ubuntu.sh)"
 ```
 
 Intune for Ubuntu 24.04 (MS Dev):
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/intune-ubuntu-24.04.sh)"
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/intune-ubuntu-24.04.sh)"
 ```
 
 ## Machine-local secrets
