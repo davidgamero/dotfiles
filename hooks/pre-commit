@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+#
+# pre-commit — scan staged changes for secrets / corporate info before commit.
+# Blocks the commit (exit 1) on any match. Bypass with `git commit --no-verify`
+# only if you are certain a match is a false positive.
+#
+# Installed by hooks/install-hooks.sh (symlinks this into .git/hooks/pre-commit).
+
+set -euo pipefail
+
+# Only scan what is actually staged (added/copied/modified), text content only.
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged_files" ] && exit 0
+
+fail=0
+report() {
+  # $1 = label, $2 = matching "file:line:content"
+  fail=1
+  echo "  ✗ $1"
+  echo "      $2"
+}
+
+# Patterns: label|regex (ERE). Keep each specific to limit false positives.
+patterns=(
+  'Azure subscription / GUID|[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
+  'Private key block|-----BEGIN ([A-Z]+ )?PRIVATE KEY-----'
+  'AWS access key|AKIA[0-9A-Z]{16}'
+  'GitHub token|gh[pousr]_[A-Za-z0-9]{20,}'
+  'Slack token|xox[baprs]-[A-Za-z0-9-]+'
+  'Generic bearer/API token|(bearer|token|secret|api[_-]?key|password|passwd|pwd)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9/+_.-]{16,}'
+  'Corporate email|[A-Za-z0-9._%+-]+@(microsoft|azure)\.com'
+  'Azure connection string|(AccountKey|SharedAccessKey|InstrumentationKey)=[A-Za-z0-9/+=]{16,}'
+  'Private/internal host|\b[A-Za-z0-9-]+\.(corp|internal|redmond)\.(microsoft|net|com|local)\b'
+)
+
+echo "pre-commit: scanning staged changes for secrets…"
+
+while IFS= read -r file; do
+  # Skip binary files and the example/template + this hook itself.
+  case "$file" in
+    *.example|hooks/pre-commit) continue ;;
+  esac
+
+  # Get staged content. Skip if unreadable (e.g. binary/deleted).
+  staged=$(git show ":$file" 2>/dev/null) || continue
+
+  for entry in "${patterns[@]}"; do
+    label="${entry%%|*}"
+    regex="${entry#*|}"
+    match=$(printf '%s\n' "$staged" | grep -nEi -e "$regex" | head -3 || true)
+    if [ -n "$match" ]; then
+      while IFS= read -r m; do
+        report "$label" "$file:$m"
+      done <<< "$match"
+    fi
+  done
+done <<< "$staged_files"
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "pre-commit: BLOCKED — potential secrets/corporate info above."
+  echo "  • Move real values into a *.local.zsh file (gitignored), or"
+  echo "  • If genuinely a false positive: git commit --no-verify"
+  exit 1
+fi
+
+echo "pre-commit: clean."
+exit 0

@@ -1,0 +1,7 @@
+# Local, machine-specific config — never commit.
+*.local.zsh
+devbox.local.zsh
+
+# Backups created by setup scripts.
+*.backup.*
+*.bak

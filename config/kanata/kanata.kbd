@@ -1,0 +1,55 @@
+;; ============================================================
+;; kanata: Meh-on-hold for M and V (tap = letter, hold = Meh)
+;; Meh = Left Ctrl + Left Alt + Left Shift
+;; Paste this whole file into the simulator: https://jtroo.github.io
+;; ============================================================
+
+(defcfg
+  process-unmapped-keys yes
+)
+
+;; Physical keys kanata intercepts. Order here must match deflayer below.
+(defsrc
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
+)
+
+(defalias
+  ;; Meh = Ctrl+Alt+Shift held together (bare modifiers via multi,
+  ;; NOT a C-A-S- output chord, so they stay held while you press other keys).
+  meh (multi lctl lalt lsft)
+
+  ;; tap = the letter, hold = Meh.
+  ;;   200 = tap-repress timeout (ms)
+  ;;   200 = hold timeout (ms) -> how long you hold before Meh engages
+  ;;   (m v) = "tap keys": if one of these is pressed first, commit to the
+  ;;           letter immediately. Protects fast rolls like typing "mv".
+  m@ (tap-hold-release-keys 200 200 m @meh (m v))
+  v@ (tap-hold-release-keys 200 200 v @meh (m v))
+
+  ;; Home-row mods: tap = letter, hold = modifier.
+  ;;   left hand: s=alt d=ctrl f=gui
+  ;;   right hand: j=gui k=ctrl l=alt
+  s@ (tap-hold-release-keys 200 200 s lalt (a s d f g))
+  d@ (tap-hold-release-keys 200 200 d lctl (a s d f g))
+  f@ (tap-hold-release-keys 200 200 f lmet (a s d f g))
+  j@ (tap-hold-release-keys 200 200 j rmet (h j k l ;))
+  k@ (tap-hold-release-keys 200 200 k rctl (h j k l ;))
+  l@ (tap-hold-release-keys 200 200 l ralt (h j k l ;))
+
+  ;; Space: tap = space, hold = shift.
+  spc@ (tap-hold-release 200 200 spc lsft)
+)
+
+;; The behaviour layer. Only m and v differ (@m@ / @v@); the rest is
+;; a standard QWERTY passthrough.
+(deflayer base
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    @s@  @d@  @f@  g    h    @j@  @k@  @l@  ;    '    ret
+  lsft z    x    c    @v@  b    n    @m@  ,    .    /    rsft
+  lctl lmet lalt           @spc@          ralt rmet rctl
+)

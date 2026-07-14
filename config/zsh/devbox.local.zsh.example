@@ -1,0 +1,12 @@
+# Template for machine-local devbox config.
+# Copy to ~/.config/zsh/devbox.local.zsh and fill in real values.
+# The real file is gitignored so Azure subscription IDs / infra names
+# never land in this public repo.
+
+DEVBOX_RG=your-resource-group
+DEVBOX_VM_NAME=your-vm-name
+DEVBOX_SUB_ID=00000000-0000-0000-0000-000000000000
+
+DEVBOX5_RG=your-resource-group
+DEVBOX5_VM_NAME=your-vm-name
+DEVBOX5_SUB_ID=00000000-0000-0000-0000-000000000000

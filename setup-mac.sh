@@ -41,3 +41,22 @@ if ! command -v nvim >/dev/null 2>&1; then
 else
     echo "neovim install found..."
 fi
+
+# install kanata (keyboard remapper)
+if ! command -v kanata >/dev/null 2>&1; then
+	echo "kanata not found, installing..."
+	brew install kanata
+else
+	echo "kanata already found..."
+fi
+
+# symlink tracked dotfiles into place (~/.config/*, ~/.zshrc)
+SCRIPT_DIR="$(cd -- "$(dirname -- "$0")" >/dev/null 2>&1 && pwd)"
+"$SCRIPT_DIR/link.sh"
+
+# install git hooks (pre-commit secret scanner)
+"$SCRIPT_DIR/hooks/install-hooks.sh"
+
+echo ""
+echo "Setup complete. Copy config/zsh/devbox.local.zsh.example to"
+echo "~/.config/zsh/devbox.local.zsh and fill in your real values if needed."
