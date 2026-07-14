@@ -1,6 +1,6 @@
 # My Dotfiles
 
-[![CI](https://github.com/davidgamero/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/davidgamero/dotfiles/actions/workflows/ci.yml)
+[![CI](https://github.com/davidgamero/dotfiles/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/davidgamero/dotfiles/actions/workflows/ci.yml?query=branch%3Amain)
 
 Version-controlled configs, symlinked into place. Secrets stay local (gitignored)
 and a pre-commit hook scans for anything that shouldn't be pushed.
