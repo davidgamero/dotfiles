@@ -5,6 +5,24 @@
 Version-controlled configs, symlinked into place. Secrets stay local (gitignored)
 and a pre-commit hook scans for anything that shouldn't be pushed.
 
+## Setup
+
+Mac:
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-mac.sh)"
+```
+
+Or from a clone:
+```
+git clone https://github.com/davidgamero/dotfiles ~/.dotfiles
+~/.dotfiles/scripts/setup-mac.sh          # installs tools + links + hooks
+```
+
+Ubuntu:
+```
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-ubuntu.sh)"
+```
+
 ## Structure
 
 ```
@@ -38,24 +56,6 @@ Symlink chains created by `link.sh`:
 
 Shell is [zsh4humans](https://github.com/romkatv/zsh4humans): `~/.zshenv`
 self-fetches z4h on first interactive shell — no oh-my-zsh needed.
-
-## Setup
-
-Mac:
-```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-mac.sh)"
-```
-
-Or from a clone:
-```
-git clone https://github.com/davidgamero/dotfiles ~/.dotfiles
-~/.dotfiles/scripts/setup-mac.sh          # installs tools + links + hooks
-```
-
-Ubuntu:
-```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-ubuntu.sh)"
-```
 
 ## Machine-local secrets
 
