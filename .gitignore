@@ -5,3 +5,5 @@ devbox.local.zsh
 # Backups created by setup scripts.
 *.backup.*
 *.bak
+
+**/.DS_Store
