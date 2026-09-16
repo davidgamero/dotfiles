@@ -8,20 +8,84 @@ and a pre-commit hook scans for anything that shouldn't be pushed.
 ## Setup
 
 Mac:
-```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-mac.sh)"
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-mac.sh)"
 ```
 
 Or from a clone:
-```
+```bash
 git clone https://github.com/davidgamero/dotfiles ~/.dotfiles
-~/.dotfiles/scripts/setup-mac.sh          # installs tools + links + hooks
+bash ~/.dotfiles/scripts/setup-mac.sh
 ```
 
 Ubuntu:
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-ubuntu.sh)"
 ```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/davidgamero/dotfiles/main/scripts/setup-ubuntu.sh)"
+
+The default installation is intentionally small. It installs the shell/editor
+core, links configs, and installs this repository's pre-commit hook:
+
+- Git, GitHub CLI, Zsh, tmux, fzf, zoxide, Neovim, ripgrep, fd, jq, and build essentials
+- TPM (tmux plugin manager)
+- Your private `davidgamero/nvim` config cloned into `~/.config/nvim`
+- The tracked dotfile symlinks
+
+Heavy or privileged tooling is opt-in through profiles:
+
+```bash
+# Run from a clone. Core is always included.
+bash ~/.dotfiles/scripts/setup-ubuntu.sh containers kubernetes
+bash ~/.dotfiles/scripts/setup-ubuntu.sh cloud gui languages
+bash ~/.dotfiles/scripts/setup-mac.sh fonts containers gui
+
+# See platform-specific profiles.
+bash ~/.dotfiles/scripts/setup-ubuntu.sh --help
+bash ~/.dotfiles/scripts/setup-mac.sh --help
 ```
+
+Available profiles:
+
+| Profile | Ubuntu | macOS |
+| --- | --- | --- |
+| `containers` | Docker Engine + Compose | Docker Desktop |
+| `kubernetes` | kubectl + kind (also installs Docker) | kubectl + kind |
+| `cloud` | Azure CLI | Azure CLI |
+| `gui` | VS Code | VS Code |
+| `languages` | nvm + system Go | nvm + Go |
+| `kanata` | Requires an existing Cargo install | Binary only; system setup remains manual |
+| `ai` | OpenCode official installer | OpenCode Homebrew tap |
+| `fonts` | — | Cascadia Mono Nerd Font |
+| `signing` | SSH Git signing | SSH Git signing |
+| `all` | Every optional profile | Every optional profile |
+
+The setup scripts do **not** perform a full operating-system upgrade. Optional
+profiles can add third-party package repositories or execute vendor installers;
+review the scripts before using `all`.
+
+Docker group membership is deliberately not automatic because the group is
+effectively root access. The Ubuntu installer prints the explicit command if
+you choose that profile.
+
+Kanata is not operational just from installing the binary. It still requires
+platform permissions, drivers, and service setup described in
+`config/kanata/README.md`.
+
+### First launch downloads
+
+When setup is run from an interactive terminal without profile arguments, it
+shows a numbered, emoji-labelled menu for optional components. Press Enter for
+core only, or enter comma-separated selections such as `1,2,5`. Explicit
+profile arguments remain available for scripts and unattended setup.
+
+The Neovim config repository is private. Core setup installs `gh` and requires
+an authenticated GitHub CLI session (`gh auth login`) to clone it. An existing
+`~/.config/nvim` Git checkout is updated with `git pull --ff-only`; other files
+or symlinks are backed up before cloning.
+
+The first interactive Zsh starts the zsh4humans bootstrap in `.zshenv`.
+The first Neovim launch downloads LazyVim plugins and configured language
+servers. Both require network access.
 
 ## Structure
 
@@ -31,14 +95,14 @@ config/
   zsh/.zshrc                    zsh4humans (z4h) config
   zsh/devbox.local.zsh.example  template for machine-local secrets
   kanata/kanata.kbd             kanata keyboard remapper
-  nvim/                         LazyVim-based neovim config
   tmux/tmux.conf                tmux config
 hooks/
   pre-commit                    secret / corporate-info scanner
   install-hooks.sh              installs the hook into .git/hooks
 scripts/
-  setup-mac.sh                  installs tools, links dotfiles, installs hooks
-  setup-ubuntu.sh               same, for Ubuntu
+  setup-mac.sh                  core setup + optional macOS profiles
+  setup-ubuntu.sh               core setup + optional Ubuntu profiles
+  profile-picker.sh             portable interactive optional-profile menu
   setup-git-commit-signing.sh   configures SSH-based git commit signing
 link.sh                         symlinks config/* into place
 test-install.sh                 CI: link idempotency + hook behavior tests
@@ -50,7 +114,6 @@ Symlink chains created by `link.sh`:
 ~/.zshenv                       → dotfiles/config/zsh/.zshenv   (bootstraps z4h)
 ~/.zshrc → ~/.config/zsh/.zshrc → dotfiles/config/zsh/.zshrc
 ~/.config/kanata/kanata.kbd     → dotfiles/config/kanata/kanata.kbd
-~/.config/nvim                  → dotfiles/config/nvim
 ~/.tmux.conf                    → dotfiles/config/tmux/tmux.conf
 ```
 

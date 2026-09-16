@@ -12,11 +12,33 @@ ok()   { echo "  PASS: $1"; PASS=$((PASS+1)); }
 bad()  { echo "  FAIL: $1"; FAIL=$((FAIL+1)); }
 
 echo "== 1. syntax check =="
-for f in scripts/setup-mac.sh scripts/setup-ubuntu.sh scripts/setup-git-commit-signing.sh link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh; do
+for f in scripts/setup-mac.sh scripts/setup-ubuntu.sh scripts/profile-picker.sh scripts/setup-git-commit-signing.sh link.sh hooks/install-hooks.sh hooks/pre-commit test-install.sh; do
   if bash -n "$REPO_ROOT/$f"; then ok "syntax $f"; else bad "syntax $f"; fi
 done
 
-echo "== 2. isolated sandbox HOME =="
+echo "== 2. installer profile interface =="
+for platform in mac ubuntu; do
+  script="$REPO_ROOT/scripts/setup-$platform.sh"
+  help_output="$(bash "$script" --help)"
+  if grep -q 'The core profile is always installed' <<<"$help_output"; then
+    ok "$platform installer help"
+  else
+    bad "$platform installer help"
+  fi
+  if bash "$script" not-a-profile >/dev/null 2>&1; then
+    bad "$platform installer accepts unknown profile"
+  else
+    ok "$platform installer rejects unknown profile"
+  fi
+  if output="$(DOTFILES_DIR="$REPO_ROOT" bash -c "$(cat "$script")" bash --help)" &&
+      grep -q 'The core profile is always installed' <<<"$output"; then
+    ok "$platform curl-style bootstrap"
+  else
+    bad "$platform curl-style bootstrap"
+  fi
+done
+
+echo "== 3. isolated sandbox HOME =="
 SANDBOX="$(mktemp -d)"
 trap 'rm -rf "$SANDBOX"' EXIT
 FAKE_HOME="$SANDBOX/home"
@@ -27,7 +49,7 @@ mkdir -p "$FAKE_REPO"
 cp -R "$REPO_ROOT/config" "$FAKE_REPO/"
 cp "$REPO_ROOT/link.sh" "$FAKE_REPO/"
 
-echo "== 3. link.sh creates all symlinks =="
+echo "== 4. link.sh creates all symlinks =="
 HOME="$FAKE_HOME" bash "$FAKE_REPO/link.sh" >/dev/null
 check_link() {
   local path="$1" want="$2"
@@ -35,28 +57,27 @@ check_link() {
 }
 check_link "$FAKE_HOME/.config/zsh/.zshrc"        "$FAKE_REPO/config/zsh/.zshrc"
 check_link "$FAKE_HOME/.config/kanata/kanata.kbd" "$FAKE_REPO/config/kanata/kanata.kbd"
-check_link "$FAKE_HOME/.config/nvim"              "$FAKE_REPO/config/nvim"
 check_link "$FAKE_HOME/.zshenv"                   "$FAKE_REPO/config/zsh/.zshenv"
 check_link "$FAKE_HOME/.tmux.conf"                "$FAKE_REPO/config/tmux/tmux.conf"
 # ~/.zshrc chains through ~/.config/zsh/.zshrc
 check_link "$FAKE_HOME/.zshrc"                    "$FAKE_HOME/.config/zsh/.zshrc"
 
-echo "== 4. link.sh is idempotent (2nd run: no backups, all 'ok') =="
+echo "== 5. link.sh is idempotent (2nd run: no backups, all 'ok') =="
 out="$(HOME="$FAKE_HOME" bash "$FAKE_REPO/link.sh")"
 if echo "$out" | grep -q '^bak:'; then bad "2nd run created a backup (not idempotent)"; echo "$out"; else ok "no backups on re-run"; fi
 if echo "$out" | grep -q '^link:'; then bad "2nd run re-created a link (not idempotent)"; else ok "no re-links on re-run"; fi
 # No stray backup files anywhere
 if find "$FAKE_HOME" -name '*.backup.*' | grep -q .; then bad "stray backup files exist"; else ok "no stray backups"; fi
 
-echo "== 5. link.sh backs up a pre-existing real file/dir =="
-rm "$FAKE_HOME/.config/nvim"
-mkdir -p "$FAKE_HOME/.config/nvim"; echo "preexisting" > "$FAKE_HOME/.config/nvim/init.lua"
+echo "== 6. link.sh backs up a pre-existing real file =="
+rm "$FAKE_HOME/.tmux.conf"
+echo "preexisting" > "$FAKE_HOME/.tmux.conf"
 HOME="$FAKE_HOME" bash "$FAKE_REPO/link.sh" >/dev/null
-if [ -L "$FAKE_HOME/.config/nvim" ] && find "$FAKE_HOME/.config" -maxdepth 1 -name 'nvim.backup.*' | grep -q .; then
-  ok "pre-existing nvim dir backed up + relinked"
-else bad "pre-existing nvim dir not handled"; fi
+if [ -L "$FAKE_HOME/.tmux.conf" ] && find "$FAKE_HOME" -maxdepth 1 -name '.tmux.conf.backup.*' | grep -q .; then
+  ok "pre-existing tmux config backed up + relinked"
+else bad "pre-existing tmux config not handled"; fi
 
-echo "== 6. pre-commit hook blocks a planted secret =="
+echo "== 7. pre-commit hook blocks a planted secret =="
 HOOK_HOME="$SANDBOX/hookrepo"
 git init -q "$HOOK_HOME"
 cp -R "$REPO_ROOT/hooks" "$HOOK_HOME/"

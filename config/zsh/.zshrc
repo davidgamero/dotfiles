@@ -47,21 +47,16 @@ fi
 # Cargo (was previously in ~/.zshenv).
 [[ -f "$HOME/.cargo/env" ]] && . "$HOME/.cargo/env"
 
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+[[ -d /opt/homebrew/opt/openjdk@11/bin ]] && export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 [[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
 
-# BEGIN Agency MANAGED BLOCK
-if [[ ":${PATH}:" != *":/Users/d/.config/agency/CurrentVersion:"* ]]; then
-    export PATH="/Users/d/.config/agency/CurrentVersion:${PATH}"
-fi
-# END Agency MANAGED BLOCK
-
-# Added by Agency Claude Code installer
-export PATH="/Users/d/.claude-cli/currentVersion:$PATH"
+# Machine-specific integrations are optional and only added when installed.
+[[ -d "$HOME/.config/agency/CurrentVersion" ]] && export PATH="$HOME/.config/agency/CurrentVersion:$PATH"
+[[ -d "$HOME/.claude-cli/currentVersion" ]] && export PATH="$HOME/.claude-cli/currentVersion:$PATH"
 
 # --- nvm (lazy) -----------------------------------------------------------
 export NVM_DIR="$HOME/.nvm"
@@ -73,8 +68,13 @@ if [ -s "$NVM_DIR/alias/default" ]; then
 fi
 _lazy_nvm_load() {
   unset -f nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+  if ! command -v nvm >/dev/null 2>&1; then
+    echo "nvm is not installed" >&2
+    return 127
+  fi
 }
 nvm() { _lazy_nvm_load; nvm "$@"; }
 
@@ -91,13 +91,6 @@ fi
 # --- Aliases --------------------------------------------------------------
 alias nvrc="nvim ~/.config/nvim"
 alias rc="nvim ~/.zshrc && echo 'reloading ~/.zshrc' && source ~/.zshrc"
-
-# --- One-time git autofetch config ---------------------------------------
-if [[ ! -f "$HOME/.zshrc_gitconfig_done" ]]; then
-  git config --global fetch.autoFetch true
-  git config --global fetch.autoFetchInterval 300  # 5 minutes
-  : > "$HOME/.zshrc_gitconfig_done"
-fi
 
 # --- Functions ------------------------------------------------------------
 setup-repo() {
