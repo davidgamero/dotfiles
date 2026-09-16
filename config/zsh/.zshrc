@@ -38,6 +38,7 @@ z4h init || return
 
 # --- Environment / PATH ---------------------------------------------------
 export EDITOR=nvim
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # Homebrew (Apple Silicon).
 if [[ -x /opt/homebrew/bin/brew ]]; then
