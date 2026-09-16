@@ -28,6 +28,16 @@ zstyle ':z4h:direnv:success' notify 'yes'
 # No SSH teleportation by default.
 zstyle ':z4h:ssh:*' enable 'no'
 
+# Keep remote work in tmux and resume the most recently used session after an
+# SSH reconnect. Set NO_TMUX=1 for a one-off login outside tmux.
+if [[ -z "$TMUX" && -n "$SSH_TTY" && -z "$NO_TMUX" ]] && (( $+commands[tmux] )); then
+  if tmux has-session 2>/dev/null; then
+    exec tmux attach-session
+  else
+    exec tmux new-session -s main
+  fi
+fi
+
 # Initialize z4h. Console I/O is unavailable after this point until Zsh is
 # fully initialized. Anything needing user interaction or network I/O goes ABOVE.
 z4h init || return
