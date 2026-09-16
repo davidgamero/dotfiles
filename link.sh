@@ -38,6 +38,8 @@ link "$REPO_ROOT/config/kanata/kanata.kbd" "$HOME/.config/kanata/kanata.kbd"
 link "$REPO_ROOT/config/zsh/.zshenv" "$HOME/.zshenv"
 # ~/.zshrc -> ~/.config/zsh/.zshrc (z4h reads ~/.zshrc)
 link "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
+# Powerlevel10k reads its generated config from ~/.p10k.zsh.
+link "$REPO_ROOT/config/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
 # tmux reads ~/.tmux.conf
 link "$REPO_ROOT/config/tmux/tmux.conf" "$HOME/.tmux.conf"
 

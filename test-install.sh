@@ -58,6 +58,7 @@ check_link() {
 check_link "$FAKE_HOME/.config/zsh/.zshrc"        "$FAKE_REPO/config/zsh/.zshrc"
 check_link "$FAKE_HOME/.config/kanata/kanata.kbd" "$FAKE_REPO/config/kanata/kanata.kbd"
 check_link "$FAKE_HOME/.zshenv"                   "$FAKE_REPO/config/zsh/.zshenv"
+check_link "$FAKE_HOME/.p10k.zsh"                 "$FAKE_REPO/config/zsh/.p10k.zsh"
 check_link "$FAKE_HOME/.tmux.conf"                "$FAKE_REPO/config/tmux/tmux.conf"
 # ~/.zshrc chains through ~/.config/zsh/.zshrc
 check_link "$FAKE_HOME/.zshrc"                    "$FAKE_HOME/.config/zsh/.zshrc"

@@ -109,6 +109,7 @@ and configured language servers. Both require network access.
 config/
   zsh/.zshenv                   zsh4humans (z4h) bootstrap (fetches z4h, sets ZDOTDIR)
   zsh/.zshrc                    zsh4humans (z4h) config
+  zsh/.p10k.zsh                 Powerlevel10k prompt config
   zsh/devbox.local.zsh.example  template for machine-local secrets
   kanata/kanata.kbd             kanata keyboard remapper
   tmux/tmux.conf                tmux config
@@ -129,6 +130,7 @@ Symlink chains created by `link.sh`:
 ```
 ~/.zshenv                       → dotfiles/config/zsh/.zshenv   (bootstraps z4h)
 ~/.zshrc → ~/.config/zsh/.zshrc → dotfiles/config/zsh/.zshrc
+~/.p10k.zsh                     → dotfiles/config/zsh/.p10k.zsh
 ~/.config/kanata/kanata.kbd     → dotfiles/config/kanata/kanata.kbd
 ~/.tmux.conf                    → dotfiles/config/tmux/tmux.conf
 ```
