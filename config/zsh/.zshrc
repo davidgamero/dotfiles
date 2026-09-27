@@ -100,10 +100,58 @@ if command -v zoxide >/dev/null 2>&1; then
 fi
 
 # --- Aliases --------------------------------------------------------------
+alias opencode='_opencode_session_picker'
 alias nvrc="nvim ~/.config/nvim"
 alias rc="nvim ~/.zshrc && echo 'reloading ~/.zshrc' && source ~/.zshrc"
 
 # --- Functions ------------------------------------------------------------
+_opencode_session_picker() {
+  # Explicit arguments go directly to the CLI (run, --help, -s, etc.).
+  if (( $# )); then
+    command opencode "$@"
+    return
+  fi
+
+  local server='http://127.0.0.1:4096'
+  if [[ ! -t 0 || ! -t 1 ]] || ! command -v fzf >/dev/null 2>&1 \
+      || ! command -v jq >/dev/null 2>&1; then
+    command opencode attach "$server" --dir "$PWD"
+    return
+  fi
+
+  local sessions rows pick id directory
+  sessions=$(command opencode session list --format=json) || return
+  rows=$(printf '%s' "$sessions" | jq -r '
+    sort_by(.updated) | reverse | .[]
+    | [.id, (.title // "(untitled)"),
+       ((.updated / 1000) | strflocaltime("%Y-%m-%d %H:%M")),
+       .directory]
+    | @tsv
+  ') || return
+
+  # Keep New session first and selected on opening, regardless of fzf defaults.
+  pick=$(
+    {
+      printf '__NEW__\t+ New session\n'
+      [[ -z "$rows" ]] || printf '%s\n' "$rows"
+    } | FZF_DEFAULT_OPTS='' FZF_DEFAULT_OPTS_FILE='' command fzf \
+      --delimiter=$'\t' --with-nth=2.. --no-sort \
+      --prompt='opencode session> ' \
+      --header='enter: open   esc: cancel' \
+      --height=60% --layout=reverse --border
+  ) || return
+
+  id=${pick%%$'\t'*}
+  if [[ "$id" == '__NEW__' ]]; then
+    command opencode attach "$server" --dir "$PWD"
+  elif [[ -n "$id" ]]; then
+    directory=$(printf '%s' "$sessions" | jq -r --arg id "$id" '
+      .[] | select(.id == $id) | .directory
+    ') || return
+    command opencode attach "$server" --dir "$directory" --session "$id"
+  fi
+}
+
 setup-repo() {
   TARGET_REPO=$1
   FORK_GITHUB_USERNAME=davidgamero
