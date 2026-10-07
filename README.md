@@ -66,7 +66,7 @@ Available profiles:
 | `gui` | [Visual Studio Code](https://code.visualstudio.com/) | Visual Studio Code |
 | `languages` | [nvm](https://github.com/nvm-sh/nvm) + system [Go](https://go.dev/) | nvm + Go |
 | `kanata` | Requires an existing Cargo install | Binary only; system setup remains manual |
-| `ai` | [OpenCode](https://opencode.ai/docs/) official installer | OpenCode Homebrew tap |
+| `ai` | [OpenCode](https://opencode.ai/docs/) official installer | OpenCode Homebrew tap + SwiftBar Copilot usage |
 | `fonts` | — | Cascadia Mono Nerd Font |
 | `signing` | [SSH Git signing](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work) | SSH Git signing |
 | `all` | Every optional profile | Every optional profile |
@@ -113,6 +113,7 @@ config/
   zsh/devbox.local.zsh.example  template for machine-local secrets
   kanata/kanata.kbd             kanata keyboard remapper
   tmux/tmux.conf                tmux config
+  SwiftBar/copilot-usage.1m.py  monthly Copilot allowance used (macOS menu bar)
 hooks/
   pre-commit                    secret / corporate-info scanner
   install-hooks.sh              installs the hook into .git/hooks
@@ -133,6 +134,7 @@ Symlink chains created by `link.sh`:
 ~/.p10k.zsh                     → dotfiles/config/zsh/.p10k.zsh
 ~/.config/kanata/kanata.kbd     → dotfiles/config/kanata/kanata.kbd
 ~/.tmux.conf                    → dotfiles/config/tmux/tmux.conf
+~/.config/SwiftBar/copilot-usage.1m.py → dotfiles/config/SwiftBar/copilot-usage.1m.py
 ```
 
 Shell is [zsh4humans](https://github.com/romkatv/zsh4humans): `~/.zshenv`
@@ -161,6 +163,46 @@ Installed automatically by both platform setup scripts; install manually with:
 ```
 
 Bypass only for a confirmed false positive: `git commit --no-verify`.
+
+## Copilot usage in SwiftBar (macOS)
+
+The macOS `ai` profile installs SwiftBar and configures its plugin directory:
+
+```bash
+bash ~/.dotfiles/scripts/setup-mac.sh ai
+```
+
+For an existing installation, run `bash ~/.dotfiles/link.sh`, set SwiftBar's
+plugin directory to `~/.config/SwiftBar`, and open SwiftBar.
+
+The menu bar shows `✨: 1.7%`: the percentage **used** of the monthly Copilot
+allowance, from GitHub's `premium_interactions.percent_remaining` quota snapshot.
+It refreshes every minute and when opened. The menu includes the remaining
+percentage, reset date, and a manual refresh action. Unlimited quotas show `∞`;
+failed requests show `--` rather than an outdated percentage.
+
+The usage text is colored by allowance used versus the percentage of the monthly
+cycle elapsed (calculated in UTC from GitHub's reset date):
+
+- **Green:** usage is at or below the elapsed percentage.
+- **Yellow:** usage is ahead of that pace by up to 25%.
+- **Orange:** usage is 25–50% ahead of that pace.
+- **Red:** usage is more than 50% ahead, or the allowance is fully used.
+
+For example, halfway through the cycle, 50% used is green, 60% is yellow,
+70% is orange, and 80% is red. The dropdown shows the cycle elapsed and time
+remaining percentages. If the reset date is missing or stale, no pace color is
+applied.
+
+Sign in to GitHub Copilot in OpenCode on each machine. The plugin reads its
+machine-local OAuth credentials, falling back to GitHub Copilot's local
+`apps.json`/`hosts.json`. Credentials are never stored in this repository.
+The plugin requires `/usr/bin/python3` (available with Xcode Command Line Tools)
+and uses GitHub's internal Copilot quota endpoint.
+
+`link.sh` symlinks the plugin file, so pulling updates into the linked checkout
+updates the live plugin. SwiftBar's plugin-directory preference is machine-local;
+the macOS `ai` setup profile applies it on each machine.
 
 ## Syncing changes
 

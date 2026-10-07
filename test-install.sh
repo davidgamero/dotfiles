@@ -57,6 +57,7 @@ check_link() {
 }
 check_link "$FAKE_HOME/.config/zsh/.zshrc"        "$FAKE_REPO/config/zsh/.zshrc"
 check_link "$FAKE_HOME/.config/kanata/kanata.kbd" "$FAKE_REPO/config/kanata/kanata.kbd"
+check_link "$FAKE_HOME/.config/SwiftBar/copilot-usage.1m.py" "$FAKE_REPO/config/SwiftBar/copilot-usage.1m.py"
 check_link "$FAKE_HOME/.zshenv"                   "$FAKE_REPO/config/zsh/.zshenv"
 check_link "$FAKE_HOME/.p10k.zsh"                 "$FAKE_REPO/config/zsh/.p10k.zsh"
 check_link "$FAKE_HOME/.tmux.conf"                "$FAKE_REPO/config/tmux/tmux.conf"

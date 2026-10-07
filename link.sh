@@ -32,6 +32,7 @@ link() {
 # --- ~/.config mirror ------------------------------------------------------
 link "$REPO_ROOT/config/zsh/.zshrc"        "$HOME/.config/zsh/.zshrc"
 link "$REPO_ROOT/config/kanata/kanata.kbd" "$HOME/.config/kanata/kanata.kbd"
+link "$REPO_ROOT/config/SwiftBar/copilot-usage.1m.py" "$HOME/.config/SwiftBar/copilot-usage.1m.py"
 
 # --- home-level convenience symlink ---------------------------------------
 # ~/.zshenv bootstraps zsh4humans (fetches z4h, sets ZDOTDIR) — must live at $HOME.

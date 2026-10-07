@@ -32,7 +32,7 @@ The core profile is always installed. Optional profiles:
   gui         Visual Studio Code
   languages   nvm and Go
   kanata      kanata binary (driver, permissions, and daemon remain manual)
-  ai          OpenCode terminal coding agent
+  ai          OpenCode + SwiftBar monthly Copilot usage
   signing     configure SSH-based Git commit signing
   all         all optional profiles
 EOF
@@ -118,9 +118,16 @@ if has_profile kanata; then
   echo "note: kanata still requires macOS permissions, Karabiner VirtualHIDDevice, and a daemon; see config/kanata/README.md"
 fi
 
-has_profile ai && brew install anomalyco/tap/opencode
+if has_profile ai; then
+  brew install anomalyco/tap/opencode
+  brew install --cask swiftbar
+  defaults write com.ameba.SwiftBar PluginDirectory -string "$HOME/.config/SwiftBar"
+fi
 
 "$REPO_ROOT/link.sh"
+if has_profile ai; then
+  open -a SwiftBar
+fi
 TMUX_PLUGIN_MANAGER_PATH="$HOME/.tmux/plugins" "$HOME/.tmux/plugins/tpm/bin/install_plugins"
 "$REPO_ROOT/hooks/install-hooks.sh"
 
