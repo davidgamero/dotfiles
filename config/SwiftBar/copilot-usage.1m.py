@@ -53,16 +53,19 @@ def cycle_elapsed(reset, now):
         start = end.replace(year=year, month=month, day=day)
         if not start <= now < end:
             return None
-        return (now - start).total_seconds() / (end - start).total_seconds() * 100
+        cycle_seconds = (end - start).total_seconds()
+        elapsed = (now - start).total_seconds() / cycle_seconds * 100
+        day_percent = 86400 / cycle_seconds * 100
+        return elapsed, day_percent
     except (ValueError, TypeError, AttributeError):
         return None
 
 
-def pace_color(used, elapsed):
+def pace_color(used, elapsed, day_percent):
     if used >= 100:
         return '#FF453A', 'Allowance fully used'
-    if used <= elapsed:
-        return '#34C759', 'At or below monthly pace'
+    if used <= elapsed + day_percent:
+        return '#FFFFFF', 'At or below monthly pace plus one day'
     if used <= elapsed * 1.25:
         return '#FFD60A', 'Up to 25% ahead of monthly pace'
     if used <= elapsed * 1.5:
@@ -85,7 +88,8 @@ def usage():
     if not isinstance(quota, dict):
         raise ValueError('GitHub did not return a monthly Copilot allowance.')
     reset = data.get('quota_reset_date_utc') or data.get('quota_reset_date')
-    elapsed = cycle_elapsed(reset, datetime.now(timezone.utc))
+    cycle = cycle_elapsed(reset, datetime.now(timezone.utc))
+    elapsed, day_percent = cycle if cycle is not None else (None, None)
 
     if quota.get('unlimited'):
         print('✨: ∞')
@@ -96,7 +100,7 @@ def usage():
         if not math.isfinite(remaining) or not 0 <= remaining <= 100:
             raise ValueError('GitHub returned an invalid usage percentage.')
         used = 100 - remaining
-        color, pace = pace_color(used, elapsed) if elapsed is not None else (None, None)
+        color, pace = pace_color(used, elapsed, day_percent) if elapsed is not None else (None, None)
         style = f' | color={color}' if color else ''
         print(f'✨: {used:.1f}%{style}')
         print('---')

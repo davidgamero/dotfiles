@@ -184,12 +184,16 @@ failed requests show `--` rather than an outdated percentage.
 The usage text is colored by allowance used versus the percentage of the monthly
 cycle elapsed (calculated in UTC from GitHub's reset date):
 
-- **Green:** usage is at or below the elapsed percentage.
+- **White:** usage is at or below the elapsed percentage plus one day's
+  allowance (about 3.2 percentage points in a 31-day cycle).
 - **Yellow:** usage is ahead of that pace by up to 25%.
 - **Orange:** usage is 25–50% ahead of that pace.
 - **Red:** usage is more than 50% ahead, or the allowance is fully used.
 
-For example, halfway through the cycle, 50% used is green, 60% is yellow,
+The one-day white allowance takes priority over the pace colors, but a fully used
+allowance is always red.
+
+For example, halfway through the cycle, 40% and 50% used are white, 60% is yellow,
 70% is orange, and 80% is red. The dropdown shows the cycle elapsed and time
 remaining percentages. If the reset date is missing or stale, no pace color is
 applied.
