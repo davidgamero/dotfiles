@@ -15,6 +15,11 @@ zstyle ':z4h:bindkey' keyboard  'mac'
 # Mark up shell's output with semantic information.
 zstyle ':z4h:' term-shell-integration 'yes'
 
+# Herdr must see the real foreground agent, not Z4H's integrated tmux.
+if [[ ${HERDR_ENV:-} == 1 ]]; then
+  zstyle ':z4h:' start-tmux 'no'
+fi
+
 # Right-arrow accepts the whole autosuggestion.
 zstyle ':z4h:autosuggestions' forward-char 'accept'
 
@@ -28,9 +33,9 @@ zstyle ':z4h:direnv:success' notify 'yes'
 # No SSH teleportation by default.
 zstyle ':z4h:ssh:*' enable 'no'
 
-# Keep remote work in tmux and resume the most recently used session after an
-# SSH reconnect. Set NO_TMUX=1 for a one-off login outside tmux.
-if [[ -z "$TMUX" && -n "$SSH_TTY" && -z "$NO_TMUX" ]] && (( $+commands[tmux] )); then
+# Keep remote work outside Herdr in tmux and resume the most recently used
+# session after an SSH reconnect. Set NO_TMUX=1 for a one-off login outside tmux.
+if [[ -z "$TMUX" && -n "$SSH_TTY" && -z "$NO_TMUX" && ${HERDR_ENV:-} != 1 ]] && (( $+commands[tmux] )); then
   if tmux has-session 2>/dev/null; then
     exec tmux attach-session
   else
@@ -100,7 +105,7 @@ if command -v zoxide >/dev/null 2>&1; then
 fi
 
 # --- Aliases --------------------------------------------------------------
-alias opencode='_opencode_session_picker'
+alias p-opencode='_opencode_session_picker'
 alias nvrc="nvim ~/.config/nvim"
 alias rc="nvim ~/.zshrc && echo 'reloading ~/.zshrc' && source ~/.zshrc"
 
@@ -112,10 +117,9 @@ _opencode_session_picker() {
     return
   fi
 
-  local server='http://127.0.0.1:4096'
   if [[ ! -t 0 || ! -t 1 ]] || ! command -v fzf >/dev/null 2>&1 \
       || ! command -v jq >/dev/null 2>&1; then
-    command opencode attach "$server" --dir "$PWD"
+    command opencode "$PWD"
     return
   fi
 
@@ -143,12 +147,12 @@ _opencode_session_picker() {
 
   id=${pick%%$'\t'*}
   if [[ "$id" == '__NEW__' ]]; then
-    command opencode attach "$server" --dir "$PWD"
+    command opencode "$PWD"
   elif [[ -n "$id" ]]; then
     directory=$(printf '%s' "$sessions" | jq -r --arg id "$id" '
       .[] | select(.id == $id) | .directory
     ') || return
-    command opencode attach "$server" --dir "$directory" --session "$id"
+    command opencode "$directory" --session "$id"
   fi
 }
 
@@ -308,3 +312,6 @@ local _now=$EPOCHSECONDS
 strftime '%a %b %d %Y %I:%M:%S %p %Z' $_now
 print -r -- $_now
 printf 'zshrc load: %.0fms\n' $(( (EPOCHREALTIME - _ZSHRC_START) * 1000 ))
+
+# bun completions
+[ -s "/Users/david/.bun/_bun" ] && source "/Users/david/.bun/_bun"
