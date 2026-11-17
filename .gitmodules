@@ -1,0 +1,4 @@
+[submodule "keyboard/k3pro/qmk_firmware"]
+	path = keyboard/k3pro/qmk_firmware
+	url = https://github.com/davidgamero/qmk_firmware.git
+	branch = david/k3-pro
